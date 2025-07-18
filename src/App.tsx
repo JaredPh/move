@@ -1,19 +1,33 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
-import Login from './pages/Login'
-import Box from './pages/Box'
-import BoxDetail from './pages/BoxDetail'
+import { BrowserRouter, Routes, Navigate } from 'react-router-dom'
+import { Route } from 'react-router-dom'
+
+import config, { type Route as RouteType } from './config'
+import { AuthProvider } from './contexts/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
+
+function getRouteElement(route: RouteType) {
+  switch (route.type) {
+    case 'page':
+      if (route.protected) {
+        return <Route key={route.path} path={route.path} element={<ProtectedRoute><route.component /></ProtectedRoute>} />
+      } else {
+        return <Route key={route.path} path={route.path} element={<route.component />} />
+      }
+    case 'redirect':
+      return <Route key={route.path} path={route.path} element={<Navigate to={route.redirect} replace />} />
+  }
+}
 
 function App() {
+  const routes = Object.values(config.routes)
   return (
-    <BrowserRouter basename="/move">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/box" element={<Box />} />
-        <Route path="/box/:id" element={<BoxDetail />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter basename="/move">
+        <Routes>
+          {routes.map(getRouteElement)}
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 
