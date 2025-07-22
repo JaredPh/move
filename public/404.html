@@ -6,17 +6,32 @@
     <script type="text/javascript">
       // GitHub Pages SPA redirect
       // This script redirects 404s back to index.html with the route intact
-      // so React Router can handle client-side routing
+      // but preserves OAuth callback parameters
       var pathSegmentsToKeep = 1; // For GitHub Pages project sites
       
       var l = window.location;
-      l.replace(
-        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
-        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-        l.hash
-      );
+      
+      // Check if this might be an OAuth callback - preserve all parameters
+      var hasOAuthParams = l.search.includes('code=') || l.search.includes('error=') || l.hash.includes('access_token') || l.hash.includes('error');
+      
+      if (hasOAuthParams) {
+        // For OAuth callbacks, redirect to root with all parameters intact
+        console.log('OAuth callback detected, preserving parameters');
+        l.replace(
+          l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+          l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/' +
+          l.search + l.hash
+        );
+      } else {
+        // Normal SPA routing redirect
+        l.replace(
+          l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+          l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+          l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+          (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+          l.hash
+        );
+      }
     </script>
   </head>
   <body>

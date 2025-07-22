@@ -24,9 +24,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Debug URL fragments for OAuth callback
-    console.log('Current URL:', window.location.href)
-    console.log('URL hash:', window.location.hash)
-    console.log('URL search:', window.location.search)
+    console.log('AuthContext - Current URL:', window.location.href)
+    console.log('AuthContext - URL hash:', window.location.hash)
+    console.log('AuthContext - URL search:', window.location.search)
+    
+    // Check for OAuth callback parameters
+    const urlParams = new URLSearchParams(window.location.search)
+    const hashParams = new URLSearchParams(window.location.hash.replace('#', ''))
+    console.log('AuthContext - URL params:', Object.fromEntries(urlParams))
+    console.log('AuthContext - Hash params:', Object.fromEntries(hashParams))
 
     // Handle OAuth callback if present
     const handleAuthCallback = async () => {
