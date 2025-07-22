@@ -8,12 +8,22 @@
     
     <!-- GitHub Pages SPA routing support -->
     <script type="text/javascript">
+      // Debug OAuth callback
+      console.log('INDEX.HTML - Current URL:', window.location.href);
+      console.log('INDEX.HTML - URL search:', window.location.search);
+      console.log('INDEX.HTML - URL hash:', window.location.hash);
+      
+      // Check if this might be an OAuth callback
+      var hasOAuthCallback = window.location.search.includes('code=') || window.location.search.includes('error=') || window.location.hash.includes('access_token') || window.location.hash.includes('error');
+      console.log('INDEX.HTML - Has OAuth params:', hasOAuthCallback);
+      
       // Handle redirected routes from 404.html
       (function(l) {
         if (l.search[1] === '/' ) {
           var decoded = l.search.slice(1).split('&').map(function(s) { 
             return s.replace(/~and~/g, '&')
           }).join('?');
+          console.log('INDEX.HTML - SPA redirect detected, decoded:', decoded);
           window.history.replaceState(null, null,
               l.pathname.slice(0, -1) + decoded + l.hash
           );
