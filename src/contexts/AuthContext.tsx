@@ -36,6 +36,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Handle OAuth callback if present
     const handleAuthCallback = async () => {
+      if (!supabase) {
+        setLoading(false)
+        return
+      }
+      
       const { data, error } = await supabase.auth.getSession()
       if (error) {
         console.error('Error getting session:', error)
