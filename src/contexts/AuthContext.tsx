@@ -23,16 +23,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
+    // Debug URL fragments for OAuth callback
+    console.log('Current URL:', window.location.href)
+    console.log('URL hash:', window.location.hash)
+    console.log('URL search:', window.location.search)
+
+    // Handle OAuth callback if present
+    const handleAuthCallback = async () => {
+      const { data, error } = await supabase.auth.getSession()
       if (error) {
         console.error('Error getting session:', error)
       }
-      console.log('Initial session:', session)
-      setSession(session)
-      setUser(session?.user ?? null)
+      console.log('Initial session:', data.session)
+      setSession(data.session)
+      setUser(data.session?.user ?? null)
       setLoading(false)
-    })
+    }
+
+    handleAuthCallback()
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
