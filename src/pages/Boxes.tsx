@@ -385,9 +385,7 @@ function Boxes() {
                             {box.item_count || 0}
                           </td>
                           <td className="px-3 py-4 text-sm text-gray-300 align-top">
-                            <div className="flex flex-wrap gap-1">
-                              {getRoomEmojis(box) || <span className="text-gray-500">-</span>}
-                            </div>
+                            {getRoomEmojis(box) || <span className="text-gray-500">-</span>}
                           </td>
                           <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 align-top">
                             <button 
@@ -637,9 +635,7 @@ function Boxes() {
                               <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
                                 <dt className="text-sm font-medium text-gray-400">Rooms</dt>
                                 <dd className="mt-1 text-sm text-white sm:col-span-2 sm:mt-0">
-                                  <div className="flex flex-wrap gap-1">
-                                    {selectedBox && getRoomEmojis(selectedBox) || <span className="text-gray-500">No items yet</span>}
-                                  </div>
+                                  {selectedBox && getRoomEmojis(selectedBox) || <span className="text-gray-500">No items yet</span>}
                                 </dd>
                               </div>
                               <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
@@ -654,33 +650,14 @@ function Boxes() {
                           <div>
                             <h3 className="text-sm/6 font-medium text-gray-300">Items ({selectedBox?.items?.length || 0})</h3>
                             {selectedBox?.items && selectedBox.items.length > 0 ? (
-                              <div className="mt-2 space-y-3">
+                              <div className="mt-2">
                                 {selectedBox.items.map((item) => (
-                                  <div key={item.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                    <div className="flex items-start justify-between">
-                                      <div className="flex items-center space-x-3">
-                                        <div className="text-xl">
-                                          {item.fragile ? '🍷' : '📦'}
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                          <p className="text-sm font-medium text-white truncate">
-                                            {item.name || `Item ${item.id.substring(0, 8)}`}
-                                          </p>
-                                        </div>
-                                      </div>
-                                      <div className="flex space-x-2">
-                                        {item.room && (
-                                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-900/50 text-blue-300 border border-blue-800">
-                                            {item.room}
-                                          </span>
-                                        )}
-                                        {item.fragile && (
-                                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-orange-900/50 text-orange-300 border border-orange-800">
-                                            Fragile
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
+                                  <div key={item.id} className="py-2">
+                                    <p className="text-sm text-gray-300">
+                                      {item.room && <span className="mr-2">{item.room}</span>}
+                                      {item.name || `Item ${item.id.substring(0, 8)}`}
+                                      {item.fragile && <span className="ml-2">🍷</span>}
+                                    </p>
                                   </div>
                                 ))}
                               </div>
