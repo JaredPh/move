@@ -652,16 +652,49 @@ function Boxes() {
                           </div>
                           
                           <div>
-                            <h3 className="text-sm/6 font-medium text-gray-300">Items</h3>
-                            <div className="mt-2 text-center py-8">
-                              <div className="mx-auto h-12 w-12 text-gray-400">
-                                <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                </svg>
+                            <h3 className="text-sm/6 font-medium text-gray-300">Items ({selectedBox?.items?.length || 0})</h3>
+                            {selectedBox?.items && selectedBox.items.length > 0 ? (
+                              <div className="mt-2 space-y-3">
+                                {selectedBox.items.map((item) => (
+                                  <div key={item.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                                    <div className="flex items-start justify-between">
+                                      <div className="flex items-center space-x-3">
+                                        <div className="text-xl">
+                                          {item.fragile ? '🍷' : '📦'}
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                          <p className="text-sm font-medium text-white truncate">
+                                            {item.name || `Item ${item.id.substring(0, 8)}`}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <div className="flex space-x-2">
+                                        {item.room && (
+                                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-900/50 text-blue-300 border border-blue-800">
+                                            {item.room}
+                                          </span>
+                                        )}
+                                        {item.fragile && (
+                                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-orange-900/50 text-orange-300 border border-orange-800">
+                                            Fragile
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
-                              <p className="mt-2 text-sm text-gray-400">No items yet</p>
-                              <p className="text-sm text-gray-500">Items will appear here when added to this box</p>
-                            </div>
+                            ) : (
+                              <div className="mt-2 text-center py-8">
+                                <div className="mx-auto h-12 w-12 text-gray-400">
+                                  <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                  </svg>
+                                </div>
+                                <p className="mt-2 text-sm text-gray-400">No items yet</p>
+                                <p className="text-sm text-gray-500">Items will appear here when added to this box</p>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
