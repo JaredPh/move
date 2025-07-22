@@ -34,14 +34,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     console.log('AuthContext - URL params:', Object.fromEntries(urlParams))
     console.log('AuthContext - Hash params:', Object.fromEntries(hashParams))
     
-    // Check for preserved OAuth tokens
+    // Check for preserved OAuth tokens (only on first load)
     const preservedFragment = sessionStorage.getItem('supabase_auth_fragment')
     console.log('AuthContext - Preserved fragment:', preservedFragment)
     
     if (preservedFragment && !window.location.hash) {
       console.log('AuthContext - Restoring OAuth fragment')
       window.location.hash = preservedFragment.replace('#', '')
-      // Clear from storage after use
+    }
+    // Always clear from storage to prevent reprocessing
+    if (preservedFragment) {
       sessionStorage.removeItem('supabase_auth_fragment')
     }
 
@@ -74,8 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         if (event === 'SIGNED_IN' && session) {
           console.log('User signed in successfully:', session.user.email)
-          // Navigate to home page after successful sign in
-          window.location.href = '/move/'
+          // Don't force redirect - let React Router handle navigation
         }
       }
     )
