@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
 import Header from '../components/Header'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { ExclamationCircleIcon } from '@heroicons/react/16/solid'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 
@@ -53,6 +53,7 @@ function Items() {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null)
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   // Helper function to format room display
   const formatRoom = (room: string | null) => {
@@ -69,6 +70,22 @@ function Items() {
       default: return '🤷 None'
     }
   }
+
+  // Filter items based on search query
+  const filteredItems = items.filter(item => {
+    if (!searchQuery.trim()) return true
+    
+    const query = searchQuery.toLowerCase()
+    const itemName = (item.name || '').toLowerCase()
+    const roomName = formatRoom(item.room).toLowerCase()
+    const boxName = item.box ? `box #${item.box.id}` : 'unassigned'
+    const locationName = (item.box?.location?.name || 'no location').toLowerCase()
+    
+    return itemName.includes(query) || 
+           roomName.includes(query) || 
+           boxName.includes(query) ||
+           locationName.includes(query)
+  })
 
   useEffect(() => {
     if (user) {
@@ -320,10 +337,63 @@ function Items() {
           </div>
         ) : (
           <div className="px-4 sm:px-6 lg:px-8">
-            <div className="mt-8 flow-root">
-              <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                  <table className="min-w-full divide-y divide-gray-700">
+            {/* Search Bar */}
+            <div className="mt-6">
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                </div>
+                <input
+                  type="search"
+                  placeholder="Search items by name, room, box, or location..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="block w-full rounded-md bg-gray-800 py-2 pl-10 pr-3 text-sm text-white placeholder:text-gray-400 outline outline-1 -outline-offset-1 outline-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600"
+                />
+                {searchQuery && (
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="text-gray-400 hover:text-white"
+                    >
+                      <XMarkIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+              {searchQuery && (
+                <p className="mt-2 text-sm text-gray-400">
+                  {filteredItems.length} of {items.length} items
+                </p>
+              )}
+            </div>
+
+            {filteredItems.length === 0 ? (
+              <div className="mt-8 text-center">
+                <div className="mx-auto h-12 w-12 text-gray-400">
+                  <MagnifyingGlassIcon className="h-12 w-12" />
+                </div>
+                <h3 className="mt-2 text-sm font-semibold text-white">No items found</h3>
+                <p className="mt-1 text-sm text-gray-400">
+                  {searchQuery ? 'Try adjusting your search terms.' : 'No items to display.'}
+                </p>
+                {searchQuery && (
+                  <div className="mt-6">
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                      Clear search
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="mt-8 flow-root">
+                <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                  <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    <table className="min-w-full divide-y divide-gray-700">
                     <thead>
                       <tr>
                         <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0">
@@ -344,7 +414,7 @@ function Items() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800">
-                      {items.map((item) => (
+                      {filteredItems.map((item) => (
                         <tr key={item.id}>
                           <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0 align-top">
                             {(item.name || 'Unnamed item')}{item.fragile ? ' 🍷' : ''}
@@ -369,10 +439,11 @@ function Items() {
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                    </table>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
