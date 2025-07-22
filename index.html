@@ -17,6 +17,13 @@
       var hasOAuthCallback = window.location.search.includes('code=') || window.location.search.includes('error=') || window.location.hash.includes('access_token') || window.location.hash.includes('error');
       console.log('INDEX.HTML - Has OAuth params:', hasOAuthCallback);
       
+      // Preserve OAuth tokens before React Router clears them
+      if (hasOAuthCallback && window.location.hash.includes('access_token')) {
+        console.log('INDEX.HTML - Preserving OAuth tokens in sessionStorage');
+        sessionStorage.setItem('supabase_auth_fragment', window.location.hash);
+        // Don't clear the hash yet - let Supabase handle it
+      }
+      
       // Handle redirected routes from 404.html
       (function(l) {
         if (l.search[1] === '/' ) {

@@ -33,6 +33,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const hashParams = new URLSearchParams(window.location.hash.replace('#', ''))
     console.log('AuthContext - URL params:', Object.fromEntries(urlParams))
     console.log('AuthContext - Hash params:', Object.fromEntries(hashParams))
+    
+    // Check for preserved OAuth tokens
+    const preservedFragment = sessionStorage.getItem('supabase_auth_fragment')
+    console.log('AuthContext - Preserved fragment:', preservedFragment)
+    
+    if (preservedFragment && !window.location.hash) {
+      console.log('AuthContext - Restoring OAuth fragment')
+      window.location.hash = preservedFragment.replace('#', '')
+      // Clear from storage after use
+      sessionStorage.removeItem('supabase_auth_fragment')
+    }
 
     // Handle OAuth callback if present
     const handleAuthCallback = async () => {
