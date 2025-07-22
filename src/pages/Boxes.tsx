@@ -74,12 +74,28 @@ function Boxes() {
   const getRoomEmojis = (box: Box) => {
     if (!box.items || box.items.length === 0) return ''
     
-    const uniqueRooms = [...new Set(box.items
-      .map(item => item.room)
-      .filter(room => room && room.trim() !== '')
+    // Map room names to their emojis
+    const roomToEmoji = (room: string | null) => {
+      if (!room) return null
+      switch (room) {
+        case 'kitchen': return '🍳'
+        case 'lounge': return '🛋️'
+        case 'balcony': return '🌿'
+        case 'bedroom': return '🛏️'
+        case 'office': return '💻'
+        case 'bathroom': return '🚿'
+        case 'hallway': return '🚪'
+        case 'storage': return '📦'
+        default: return null
+      }
+    }
+    
+    const uniqueRoomEmojis = [...new Set(box.items
+      .map(item => roomToEmoji(item.room))
+      .filter(emoji => emoji !== null)
     )]
     
-    return uniqueRooms.join(' ')
+    return uniqueRoomEmojis.join(' ')
   }
 
   useEffect(() => {
