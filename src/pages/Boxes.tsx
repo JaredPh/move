@@ -70,6 +70,18 @@ function Boxes() {
     }
   }
 
+  // Helper function to get unique room emojis from items in a box
+  const getRoomEmojis = (box: Box) => {
+    if (!box.items || box.items.length === 0) return ''
+    
+    const uniqueRooms = [...new Set(box.items
+      .map(item => item.room)
+      .filter(room => room && room.trim() !== '')
+    )]
+    
+    return uniqueRooms.join(' ')
+  }
+
   useEffect(() => {
     if (user) {
       fetchBoxes()
@@ -337,6 +349,9 @@ function Boxes() {
                         <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-white">
                           Items
                         </th>
+                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                          Rooms
+                        </th>
                         <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
                           <span className="sr-only">View</span>
                         </th>
@@ -368,6 +383,11 @@ function Boxes() {
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300 align-top text-center">
                             {box.item_count || 0}
+                          </td>
+                          <td className="px-3 py-4 text-sm text-gray-300 align-top">
+                            <div className="flex flex-wrap gap-1">
+                              {getRoomEmojis(box) || <span className="text-gray-500">-</span>}
+                            </div>
                           </td>
                           <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 align-top">
                             <button 
@@ -612,6 +632,14 @@ function Boxes() {
                                 <dt className="text-sm font-medium text-gray-400">Fragile</dt>
                                 <dd className="mt-1 text-sm text-white sm:col-span-2 sm:mt-0">
                                   {selectedBox && isBoxFragile(selectedBox) ? 'Yes 🍷' : 'No'}
+                                </dd>
+                              </div>
+                              <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                                <dt className="text-sm font-medium text-gray-400">Rooms</dt>
+                                <dd className="mt-1 text-sm text-white sm:col-span-2 sm:mt-0">
+                                  <div className="flex flex-wrap gap-1">
+                                    {selectedBox && getRoomEmojis(selectedBox) || <span className="text-gray-500">No items yet</span>}
+                                  </div>
                                 </dd>
                               </div>
                               <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
